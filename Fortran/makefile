@@ -1,42 +1,51 @@
-#
+SUFFIX=.f
 
-SUFFIX=.f90
+##########################
+# FORTRAN CONFIGURATIONS #
+##########################
+# Compiler
+FC=ifort
 
-#FC=gfortran
-#FFLAGS = -ffree-form -ffree-line-length-none 
+# Applied to all fortran files
+FC_ALL = -xHost -ip -align -no-wrap-margin
 
-FC=/opt/intel/bin/ifort
-FFLAGS = -O3 -free #(Kewin sua bichona, eu comentei aqui!)
+# Parallelization flags
+FC_PARALLEL = -qopenmp -parallel
+F_FLAGS =  -O3 $(FC_PARALLEL) $(FC_ALL)
 
-LIB_BLAS    = -L/opt/intel/mkl/lib/intel64 -lmkl_blas95_lp64 -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -liomp5 -lpthread
-LIB_LAPACK  = -L/opt/intel/mkl/lib/intel64 -lmkl_lapack95_lp64 -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -liomp5 -lpthread
+############################
+# LIBARRIES CONFIGURATIONS #
+############################
+LIB_BLAS = -lmkl_blas95_lp64
+LIB_LAPACK = -lmkl_lapack95_lp64 -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core
+LIB_OMP = -liomp5 -lpthread
 
-INCS_MKL   = -I/opt/intel/mkl/include/intel64/lp64
+INCLUDES_MKL = -I$(MKLROOT)/include/intel64/lp64 -I$(MKLROOT)/include/fftw
 
-LIB    =  $(LIB_BLAS) $(LIB_LAPACK)
-INCS   =  $(INCS_MKL)
+LIBS  = $(LIB_GPU) $(LIB_BLAS) $(LIB_LAPACK) $(LIB_OMP) -lrt
+INCLUDES = $(INCLUDES_MKL)
 
 #-----------------------------------------------------------------------
 # general rules
 #-----------------------------------------------------------------------
 
-SOURCE =constants.o \
-	grade.o \
-        roots.o \
-        ground_state.o \
-        wf.o \
-	wfcont.o \
-	orthogonalbasis.o \
-	width.o \
-	dirs.o \
-	main.o \
+SOURCE = constants.o \
+	     grade.o \
+         roots.o \
+         ground_state.o \
+         wf.o \
+	     wfcont.o \
+	     orthogonalbasis.o \
+	     width.o \
+	     dirs.o \
+	     main.o \
 
 a: $(SOURCE)  
-	rm -f a-high2
-	$(FC) $(INCS) -o a-high2 $(SOURCE) $(LIB) 
+	rm -f a
+	$(FC) $(INCLUDES) -o a $(SOURCE) $(LIBS) 
 	-rm -f *.log
 .f.o:
-	$(FC) $(FFLAGS) $(INCS) -c $*$(SUFFIX)
+	$(FC) -free $(F_FLAGS) $(INCLUDES) -c $*$(SUFFIX)
 clean: 
 	-rm -f *.o *.mod *.dat ; touch *.f
 
