@@ -30,6 +30,7 @@ INCLUDES = $(INCLUDES_MKL)
 #-----------------------------------------------------------------------
 
 SOURCE = constants.o \
+         IO_stuff.o \
 	     grade.o \
          roots.o \
          ground_state.o \
@@ -37,13 +38,17 @@ SOURCE = constants.o \
 	     wfcont.o \
 	     orthogonalbasis.o \
 	     width.o \
-	     dirs.o \
 	     main.o \
 
 a: $(SOURCE)  
 	rm -f a
 	$(FC) $(INCLUDES) -o a $(SOURCE) $(LIBS) 
 	-rm -f *.log
+
+# Program runs very slowly with this                                                                                                                                    
+safe: F_FLAGS += -check all -traceback -fstack-protector -assume protect_parens -implicitnone -warn all,noexternal -fpe-all=0
+safe: a
+
 .f.o:
 	$(FC) -free $(F_FLAGS) $(INCLUDES) -c $*$(SUFFIX)
 clean: 

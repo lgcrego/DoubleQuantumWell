@@ -1,8 +1,8 @@
 module dirs 
 contains
   function dirname(number)
-    integer,intent(in)    :: number
-    character(len=8)      :: dirname
+    integer,intent(in) :: number
+    character(len=8)   :: dirname
 
     ! Cast the (rounded) number to string using 6 digits and
     ! leading zeros

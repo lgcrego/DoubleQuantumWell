@@ -13,25 +13,23 @@ real*8 , parameter :: AB  = HB**two*EP0/(EMB*EC**two)      !1.01d-6  cm
 real*8 , parameter :: RY  = EC**two/(two*EP0*AB)           !8.77d-15 erg
 
 real*8 , parameter :: ns = 1d-9
-real*8 , parameter :: FS =  1d-15                           !fentossegundo
-real*8 , parameter :: as =  1d-18                           !atossegundo
-real*8 , parameter :: zs =  1d-21                           !zeptossegundo
+real*8 , parameter :: FS =  1d-15                          !fentossegundo
+real*8 , parameter :: as =  1d-18                          !atossegundo
+real*8 , parameter :: zs =  1d-21                          !zeptossegundo
 real*8 , parameter :: HB_ev = 6.582d-18
 
 real*8 , parameter :: ONEA   = 1.0d-8                      !Um angstron equivale a 1.0e-8 cm
-real*8 , parameter :: ONEMEV = 1.6021d-15                  !Um mev equivale a 1.602e-15 joules
+real*8 , parameter :: ONEMEV = 1.6021d-15                  !Um meV equivale a 1.602e-15 joules
 real*8 , parameter :: ONEFS  = 1d-15
-real*8 , parameter :: RYMEV  = RY/ONEMEV                    !transforma mev em erg
+real*8 , parameter :: RYMEV  = RY/ONEMEV                   !transforma meV em erg
 real*8 , parameter :: ABA    = AB/ONEA
 real*8 , parameter :: hbar   = 1.97329d7
 real*8 , parameter :: mass   = 0.511003d6
 real*8 , parameter :: radius = (mass)/(two*(hbar**two))
 real*8 , parameter :: Cnorm  = 139.104041547323 
 
-real*8 :: v0 , v1 , l0 , l1 , l2 , dt , dl , work0 , energy_zero_package , calortotal , trabalhototal , freqress , beta
+real*8  :: v0 , v1 , l0 , l1 , l2 , dt , dl , work0 , energy_zero_package , calortotal , trabalhototal , freqress , beta
 integer :: nivel , grid_size , N_of_roots, N_of_roots_cont , N_all_roots , passo , ciclo , parameter_n , n_dt
-
-
 
 real*8 , parameter :: lim_left = 5000.d0/aba
 real*8 , parameter :: lim_right = 5000.d0/aba
@@ -53,7 +51,6 @@ real*8      , allocatable   :: sum_entropy(:)
 integer    , parameter :: N_of_domains = 5
 
 complex*16 , parameter :: zi = (0.0d0,1.d0)
-
 
 integer, dimension(8) :: values
 

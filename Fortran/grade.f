@@ -14,13 +14,21 @@ implicit none
  subroutine Grade
 !==================
 ! variaveis locais ...
-integer                 :: i , n , k
-integer , allocatable   :: domain(:)
-real*8  , allocatable   :: x1(:) , x2(:) 
+integer               :: i , n , k
+integer , allocatable :: domain(:)
+real*8  , allocatable :: x1(:) , x2(:) 
 
 if ( .not. allocated(x1)) allocate( x1(N_of_domains) )
 if ( .not. allocated(x2)) allocate( x2(N_of_domains) )
-
+!  |                                                        |
+!  |                                                        |
+!  |                                                        |
+!  |_______________         _______          _______________|
+!                 |         |     |         |               
+!                 |         |     |         |              
+!         1       |    2    |  3  |    4    |       5      
+!                 |    l1   |  l0 |    l2   |              
+!                 |________ |     |________ |              
 ! domain 1 ...
 x1(1) = -(lim_left+l0+l1)
 x2(1) = zero
@@ -49,7 +57,7 @@ p(5)  = nint((x2(5)-x1(5))*aba/dl)
 if (.not. allocated( x )) allocate( x(sum(p),2) )
 if (.not. allocated( domain )) allocate( domain(sum(p)) )
 
-
+! make dynamic grid ...
 k = 1
 do n = 1 , N_of_domains
     do i = 1 , p(n)
