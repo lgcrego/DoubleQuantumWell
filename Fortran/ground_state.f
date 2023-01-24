@@ -12,6 +12,8 @@ implicit none
 
     contains
 
+!Estado Inicial localizado no nivel=root do poço simples da esquerda
+!enp_swell(root) = energia do nivel=root do poço simples da esquerda
 !============================================
  subroutine Coeficientes( enp_swell , root ) 
 !============================================
@@ -20,7 +22,7 @@ integer , intent(in) :: root
 
 !   variaveis locais
 real*8 :: A,B,C,D,An,Bn,Cn,Dn,psinormalizado,c1,c2
-real*8 :: k2,k1,k2l1,k1l1,d1,Am(500),Bm(500),Cm(500),Dm(500)
+real*8 :: k2,k1,k2l1,k1l1,Am(500),Bm(500),Cm(500),Dm(500)
 real*8 , allocatable :: psi_2(:) 
 
  k1 = sqrt( v0 - enp_swell(root) )
@@ -59,6 +61,7 @@ real*8 , allocatable :: psi_2(:)
  Bm(root) = Bn
  Am(root) = An
 
+! wave-function do estado inicial ...
  call  wf_gstate( enp_swell , root , An , Bn , Cn , Dn )
 
 end subroutine Coeficientes
@@ -96,9 +99,11 @@ real*8  , allocatable   :: Psi_2(:)
 
  Psi(:,root) = Psi(:,root) / sqrt(norm_psi)
 
-!do i = 1 , grid_size
-!    write(100 + root , 13) x(i,1) , Psi(i,root)
-!end do
+if( verbose ) then
+  do i = 1 , grid_size
+      write(100 + root , 13) x(i,1) , Psi(i,root)
+  end do
+  endif
 
 13  format(7e15.4)
 

@@ -30,8 +30,7 @@ real*8  :: f1 , f2 , x1 ,x2 , step , dummy
 integer ::  i , j , l , i1 , i2
 
 ! local parameters
-integer :: nsteps = 500000
-integer :: totalsteps   
+integer :: nsteps = 500000 , extra_steps = 200000
 
 real*8 , allocatable :: temp(:) , Roots(:) 
 
@@ -41,12 +40,13 @@ dummy = func()
 
 select case (my_name)
        
-       case("func_dwell")
+       case( "func_swell" , "func_dwell" )
            i1 = 1
-           i2 = nsteps -2
+           i2 = nsteps -1
 
        case("cont_dwell")
-
+           i1 = nsteps
+           i2 = nsteps + extra_steps -1
 
 end select
 !--------------------------------------------------------------------
@@ -55,14 +55,13 @@ end select
 if(.not. allocated(temp) ) allocate( temp(grid_size) , source = 0.d0 )
 
 step = v0 / float(nsteps)
-totalsteps = nsteps - 2!+ 200000
 
 j = 1
 l = 1
 do i = i1 , i2
 
-    x1 = float(i)*step
-    x2 = (float(i) + 1)*step
+    x1 = float(i)*step       + tiny_epsilon
+    x2 = (float(i) + 1)*step - tiny_epsilon
 
     f1 = func(x1)
     f2 = func(x2)
@@ -73,7 +72,7 @@ do i = i1 , i2
           temp(j) = zbrent(x1,x2,func)
           j = j + 1
        else
-          if( l < N_all_roots - N_of_roots + 1 ) then
+          if( l <= N_all_roots - N_of_roots ) then
              temp(l) = zbrent(x1,x2,func)
              l = l + 1
           endif
@@ -83,12 +82,12 @@ do i = i1 , i2
 
 end do
 
-if( l == 1 ) then
+if( l == 1 ) then  ! <== no states in the continuum
         N_of_roots = j - 1   
-        if(.not. allocated( Roots ) )allocate( Roots(N_of_Roots) , source = temp(N_of_Roots) )
-else
+        if(.not. allocated( Roots ) )allocate( Roots(N_of_Roots) , source = temp(1:N_of_Roots) )
+else               ! <== there are states in the continuum
         N_of_roots_cont = l - 1
-        if(.not. allocated( Roots ) )allocate( Roots(N_of_Roots_cont) , source = temp(N_of_Roots) )
+        if(.not. allocated( Roots ) )allocate( Roots(N_of_Roots_cont) , source = temp(1:N_of_Roots_cont) )
 end if
 
 deallocate( temp )
@@ -207,6 +206,12 @@ real*8 , optional , intent(in) :: e
 real*8 :: k1 , k2 , k1l1 , k2l1 , c1 , c2
 real*8 :: func_swell
 
+if( .not. present(e) ) then
+   my_name = "func_swell"
+   func_swell = one
+   return
+   end if
+
  k1 = sqrt(v0 - e)
  k2 = sqrt(e)
 
@@ -239,7 +244,6 @@ if( .not. present(e) ) then
    end if
  
  k1=sqrt(v0-e)       
-print*, k1 , v0-e
  k2=sqrt(e)
  k3=sqrt(v1-e)
  m = l1 + l0
@@ -284,6 +288,12 @@ real*8 , optional , intent(in) :: e
 !   variaveis locais
 real*8 :: m,n,k1,k2,k2l1,k1l1,k2m,k2n,k1n,k1m, func_cont_dwell , k1left, k1right
 real*8 :: w1 ,w2 , w3 , w4 , w5 , w6 , w7 , w8 , w9 , w10 ,w11 ,w12 ,w13
+
+if( .not. present(e) ) then
+   my_name = "cont_dwell"
+   func_cont_dwell = one
+   return
+   end if
 
  k1=sqrt(e-v0)
  k2=sqrt(e)

@@ -25,26 +25,28 @@ integer :: passo , i , j , m , k
 real*8  :: ti , Ac , Bc , l22 , tf , tempo , sinal
 real*8  , allocatable :: energias_sw(:) , energias_cont(:) , energias_dw(:) , energias(:)
 
-tempo = 0.d0
-passo = 0
-ti    = 0.d0
-n_dt  = ciclo*( nint(200.d0/dl) + 1 )
-
-!===================================
-!       Energia do poço simples
-!===================================
+!=====================================================================
+! Estado Inicial localizado no nivel=nivel do poço simples da esquerda
+!=====================================================================
 l2 = 0.d0
 
 call grade
 
 if(.not. allocated( energias_sw ))  allocate( energias_sw , source = Roots( Func_swell ) )
 
+! calculates the wavefunction of the initial state = wf_gstate
 call Coeficientes( energias_sw , nivel )
 
+! single well not necessary anymore
 deallocate( energias_sw )
 
 Ac = (l22_maximo+l22_minimo)/2.d0
 Bc = (l22_maximo-l22_minimo)/2.d0
+
+tempo = 0.d0
+passo = 0
+ti    = 0.d0
+n_dt  = ciclo*( nint(200.d0/dl) + 1 )
 
 !=================================
 !       Expandindo o poço
@@ -55,7 +57,6 @@ do m = 1 , ciclo
    do i = 0 , nint( 100.d0 / dl )
 
       passo = passo + 1
-      
       tf  = one*( acos( 1.d0 - (dl*float(i))/50.d0 ))/(freq) 
       l22 = Ac - Bc*cos( tf * freq )
       l2  = l22/ABA
@@ -63,16 +64,15 @@ do m = 1 , ciclo
       dt = abs( tf - ti )
       sinal = 1.d0
       tempo = tempo + dt*freq
+
       write( 20 , 13 ) tempo , tf       
-      ! print*,  "width of second well is " , l22 , "time is ", tempo
+      print*,  "width of second well is " , l22 , "time is ", tempo
+
       !=====================================
       !       Calculo tamanho da base
       !=====================================
       call grade
    
-      !============================================
-      !       Energia ligadas e do continuo
-      !============================================
       if(.not. allocated( energias ))         allocate( energias( N_all_roots ) , source = 0.d0 )
       if(.not. allocated( phi_adiabatic ))    allocate( phi_adiabatic( grid_size , N_all_roots ) , source = 0.d0 )
    
@@ -84,13 +84,16 @@ do m = 1 , ciclo
     
       energias( 1 : N_of_roots ) = energias_dw(:)
       deallocate( energias_dw )
+
       !=======================================
       !       Poço duplo acima de v0
       !=======================================
       if(.not. allocated( energias_cont ) )   allocate( energias_cont , source = Roots( Func_cont_dwell ))
-              call coefic_cont( energias_cont , N_of_roots_cont )
-              energias( N_of_roots+1 : N_all_roots ) = energias_cont(:)
+      call coefic_cont( energias_cont , N_of_roots_cont )
+
+      energias( N_of_roots+1 : N_all_roots ) = energias_cont(:)
       deallocate( energias_cont )
+
       !====================================
       !       Cálculo da Dinâmica
       !====================================

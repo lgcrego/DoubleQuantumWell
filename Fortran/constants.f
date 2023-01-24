@@ -1,6 +1,8 @@
 module constants_and_parameters
 !	Declarar Unidades
 
+logical , parameter :: verbose = .false.
+ 
 real*8 , parameter  :: half = 0.5d0, zero = 0.0d0, one = 1.0d0, two = 2.0d0, five = 5.0d0, four = 4.0d0, three = 3.0d0, eight = 8.0d0 , six = 6.0d0
 
 real*8 , parameter :: EM0 = 9.1091d-28                     !massa do eletron kg
@@ -27,7 +29,7 @@ real*8 , parameter :: hbar   = 1.97329d7
 real*8 , parameter :: mass   = 0.511003d6
 real*8 , parameter :: radius = (mass)/(two*(hbar**two))
 real*8 , parameter :: Cnorm  = 139.104041547323 
-
+real*8 , parameter :: tiny_epsilon = 1.d-10
 real*8  :: v0 , v1 , l0 , l1 , l2 , dt , dl , work0 , energy_zero_package , calortotal , trabalhototal , freqress , beta
 integer :: nivel , grid_size , N_of_roots, N_of_roots_cont , N_all_roots , passo , ciclo , parameter_n , n_dt
 
