@@ -92,7 +92,7 @@ end if
 
 deallocate( temp )
 
-write(*,*) "number of roots = ", N_of_roots , N_of_roots_cont , N_all_roots
+if (verbose) write(*,*) "number of roots = ", N_of_roots , N_of_roots_cont , N_all_roots
 !----------------------------------------------------------
 
 28 format(5d15.8)

@@ -19,7 +19,7 @@ integer , intent(in) :: Nroots_cont
 !   variaveis locais
 integer               :: root
 real*8                :: Am(grid_size),Bm(grid_size),Cm(grid_size),Dm(grid_size),Em(grid_size),Fm(grid_size),Gm(grid_size),Hm(grid_size),Im(grid_size),Jm(grid_size)
-real*8                :: k2,k1,k3,k2l1,k1l1,k3l1,k3m,k2m,k2n,k3n,k1n,k1m, m,n , psicnormalizado , k1right,k1left
+real*8                :: k2,k1,k2l1,k1l1,k2m,k2n,k1n,k1m, m,n , psicnormalizado , k1right,k1left
 real*8                :: w1 ,w2 , w3 , w4 , w5 , w6 , w7 , w8 , w9 , w10 ,w11 ,w12 ,w13
 real*8                :: A , B, C, D, E, F, G, H, I, J, An, Bn, Cn, Dn, En, Fn, Gn, Ino, Jn,Hn
 real*8 , allocatable  :: psic_2(:)
@@ -113,9 +113,8 @@ integer     , intent(in)  :: root
 real*8      , intent(in)  :: A , B, C, D, E, F, G, H, I, J
 
 !   variveis locais
-real*8  :: rk1 , rk2 , rk3 
+real*8  :: rk1 , rk2 
 real*8  :: norm_phi_cont
-integer :: k
 real*8  , allocatable :: phi_2_cont(:) , phi_cont(:,:)
 
 if( .not. allocated(Phi_cont))    allocate( Phi_cont( size(x(:,1)) , N_of_roots_cont ) , source = 0.d0)

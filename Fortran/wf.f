@@ -17,7 +17,7 @@ real*8  , intent(in)    :: enp_dwell(:)
 integer , intent(in)    :: Nroots
 
 !   variaveis locais
-integer               :: i,root
+integer               :: root
 real*8                :: A,B,C,D,E,F,G,H,An,Bn,Cn,Dn,En,Fn,Gn,Hn,psinormalizado
 real*8                :: Am(grid_size),Bm(grid_size),Cm(grid_size),Dm(grid_size),Em(grid_size),Fm(grid_size),Gm(grid_size),Hm(grid_size)
 real*8                :: k2,k1,k3,w10,w11,w12,w13,w14,w15,w16,k2l1,k1l1,k3l1,k3m,k2m,k2n,k3n,k1n,k1m
@@ -118,7 +118,6 @@ real*8  , intent(in) :: A , B , C , D , E , F , G , H
 !   variveis locais
 real*8  :: rk1 , rk2 , rk3 
 real*8  :: norm_phi
-integer :: l , k , i
 real*8 , allocatable :: phi(:,:)
 real*8 , allocatable :: phi_2(:)
 

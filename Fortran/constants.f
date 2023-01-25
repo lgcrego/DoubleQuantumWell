@@ -2,6 +2,9 @@ module constants_and_parameters
 !	Declarar Unidades
 
 logical , parameter :: verbose = .false.
+logical , parameter :: diagram = .false.
+logical , parameter :: video   = .false.
+logical , parameter :: MecStat = .false.
  
 real*8 , parameter  :: half = 0.5d0, zero = 0.0d0, one = 1.0d0, two = 2.0d0, five = 5.0d0, four = 4.0d0, three = 3.0d0, eight = 8.0d0 , six = 6.0d0
 

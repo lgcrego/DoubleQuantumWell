@@ -30,12 +30,13 @@ INCLUDES = $(INCLUDES_MKL)
 #-----------------------------------------------------------------------
 
 SOURCE = constants.o \
-         IO_stuff.o \
 	     grade.o \
+         IO_stuff.o \
          roots.o \
          ground_state.o \
          wf.o \
 	     wfcont.o \
+         ensemble.o \
 	     orthogonalbasis.o \
 	     width.o \
 	     main.o \
