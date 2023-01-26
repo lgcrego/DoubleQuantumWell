@@ -12,13 +12,13 @@ implicit none
     contains
 
 !=================================
- Subroutine diagram_p_x( wave_t )
+ Subroutine diagram_p_x( psi_t )
 !=================================
 implicit none
-complex*16 , intent(in)  ::  wave_t(:)
+complex*16 , intent(in)  ::  psi_t(:)
 
 ! local variable
-complex*16 , allocatable :: wave_tlinha(:)
+complex*16 , allocatable :: psi_tlinha(:)
 real*8     , allocatable :: vetor_re_p(:)
 real*8     , allocatable :: vetor_img_p(:)
 real*8     , allocatable :: vetor_x(:)
@@ -28,7 +28,7 @@ integer    :: i , n , k
 forall( i = 1 : grid_size-1) a(i) = x(i+1,1) - x(i,1)
 a(grid_size) = a(grid_size-1)
 
-if ( .not. allocated(wave_tlinha))  allocate( wave_tlinha( grid_size ) )
+if ( .not. allocated(psi_tlinha))  allocate( psi_tlinha( grid_size ) )
 if ( .not. allocated(vetor_re_p))   allocate( vetor_re_p( grid_size ) )
 if ( .not. allocated(vetor_img_p))  allocate( vetor_img_p( grid_size ) )
 if ( .not. allocated(vetor_x))      allocate( vetor_x( grid_size ) )
@@ -36,19 +36,19 @@ if ( .not. allocated(vetor_x))      allocate( vetor_x( grid_size ) )
 k = 1
 do n = 1 , N_of_domains
     do i = 1 , p(n)
-        wave_tlinha( k ) = -zi*(wave_t( k + 1 ) - wave_t( k ))/a(k)  
+        psi_tlinha( k ) = -zi*(psi_t( k + 1 ) - psi_t( k ))/a(k)  
         k = k + 1
     enddo
 enddo
 
-vetor_re_p(:)  = real( conjg( wave_t(:) )*wave_tlinha(:) )
+vetor_re_p(:)  = real( conjg( psi_t(:) )*psi_tlinha(:) )
 medp_re   = sumtrap( 1 , grid_size , x(:,1) , vetor_re_p )
 
-vetor_img_p(:) = imag( conjg( wave_t(:) )*wave_tlinha(:) )
+vetor_img_p(:) = imag( conjg( psi_t(:) )*psi_tlinha(:) )
 medp_img  = sumtrap( 1 , grid_size , x(:,1) , vetor_img_p )
 
 
-forall( i = 1 : grid_size-1 ) vetor_x(i) = conjg(wave_t(i))*x(i,1)*aba*wave_t(i)
+forall( i = 1 : grid_size-1 ) vetor_x(i) = conjg(psi_t(i))*x(i,1)*aba*psi_t(i)
 medx = sumtrap( 1 , grid_size , x(:,1) , vetor_x )
 
 open( 60 , file='diagramox-real.dat' , position='append' )
@@ -59,7 +59,7 @@ open( 61 , file='diagrampx-img.dat' , position='append' )
 write( 61 , 13 ) medx , medp_img
 close( 61 )
 
-deallocate(wave_tlinha,vetor_re_p,vetor_img_p,vetor_x)
+deallocate(psi_tlinha,vetor_re_p,vetor_img_p,vetor_x)
 
 13 format(7d15.4)
 
@@ -68,10 +68,10 @@ end subroutine diagram_p_x
 !
 !
 !=====================================================
-subroutine GenerateGnuPlotScript( wave_t , energy_wf )
+subroutine GenerateGnuPlotScript( psi_t , energy_wf )
 !=====================================================
 implicit none
-complex*16 , intent(in) ::  wave_t(:)
+complex*16 , intent(in) ::  psi_t(:)
 real*8     , intent(in) :: energy_wf
 integer :: i
 
@@ -112,7 +112,7 @@ open(20 , file="plot.gnu" )
 
 !=================================================
 do i = 1 , grid_size
-    write( 20 , 14 ) x(i,1)*aba , 20*conjg(wave_t(i))*wave_t(i) + energy_wf 
+    write( 20 , 14 ) x(i,1)*aba , 20*conjg(psi_t(i))*psi_t(i) + energy_wf 
 enddo
 
  write(20,fmt='(a)') "unset output outfile"
@@ -155,17 +155,17 @@ end subroutine write_pop
 !
 !
 !====================================================================
- subroutine write_energies( tempo, energy_wf  , energy_zero_package ) 
+ subroutine write_energies( tempo, energy_wf  , energy_t0 ) 
 !====================================================================
 implicit none
-real*8  , intent(in) :: tempo , energy_wf  , energy_zero_package
+real*8  , intent(in) :: tempo , energy_wf  , energy_t0
 
 open( 327 , file='energy_wf.dat' , position='append' )
     write(327 , 13 ) tempo , energy_wf
 close( 327 )
 
 open( 325 , file='denergy.dat' , position='append' )
-    write(325 , 13 ) tempo , (energy_wf - energy_zero_package)
+    write(325 , 13 ) tempo , (energy_wf - energy_t0)
 close( 325 )
 
 13 format(7d15.4)
@@ -196,25 +196,30 @@ end subroutine write_eigenenergies
 character(len=*) , intent(in) :: instance
 
 ! variaveis locais ...
-integer      :: datatoday
-character(10):: time
-character(8) :: date
-character(5) :: zone 
+integer       :: date_time(8)
+character(2)  :: day, hour, minute
+character(4)  :: year 
+character(17) :: nome 
+
+! local parameters ...
+character(len=3) :: month(12)=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+ 
+call date_and_time(values=date_time) 
+
+write(day, '(i2)') date_time(3)
+write(year,'(i4)') date_time(1)
+write(hour,'(i2)') date_time(5)
+write(minute,'(i2)') date_time(6)
+
+nome = day//'-'//month(date_time(2))//'-'//year//'-'//hour//':'//minute
 
 select case (instance)
 
    case('make') 
-         call date_and_time( date=date , time=time , zone=zone , values=values )
-         call date_and_time( DATE=date,ZONE=zone )
-         call date_and_time( TIME=time )
-         call date_and_time( VALUES=values )
-         
-         read( date , '(I8)' ) datatoday
-         
-         call system('mkdir ' // adjustl(trim( dirname( datatoday ) ) ))
+         call system('mkdir ' //  nome )
 
    case('move')
-         call system('mv *.dat ' // adjustl(trim( dirname( datatoday ) ) ))
+         call system('mv *.dat ' // nome )
 
 end select
 

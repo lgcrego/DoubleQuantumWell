@@ -1,4 +1,4 @@
-module g_state
+module estado_inicial
 
 use constants_and_parameters
 use griding                  , only : grade , sumtrap
@@ -8,14 +8,42 @@ implicit none
 
 !   module variables 
 
-    public :: wf_gstate , coeficientes
+    public :: get_Psi_t0
 
     contains
 
-!Estado Inicial localizado no nivel=root do poço simples da esquerda
-!enp_swell(root) = energia do nivel=root do poço simples da esquerda
+!====================
+subroutine get_Psi_t0
+!====================
+implicit none
+
+!local variables
+real*8 , allocatable :: energias_sw(:)
+
+l2 = 0.d0
+
+call grade
+
+if(.not. allocated( energias_sw ))  allocate( energias_sw , source = Roots( Func_swell ) )
+
+!=====================================================================
+! calculates the wavefunction of the initial state 
+! Estado Inicial localizado no nivel=nivel do poço simples da esquerda
+
+call Coeficientes( energias_sw , nivel )
+!=====================================================================
+
+! single well not necessary anymore
+deallocate( energias_sw )
+
+end subroutine get_Psi_t0
+!
+!
+!
 !============================================
  subroutine Coeficientes( enp_swell , root ) 
+! Estado Inicial localizado no nivel=root 
+! enp_swell(root) = energia do nivel=root 
 !============================================
 real*8  , intent(in) :: enp_swell(:)
 integer , intent(in) :: root
@@ -62,15 +90,15 @@ real*8 , allocatable :: psi_2(:)
  Am(root) = An
 
 ! wave-function do estado inicial ...
- call  wf_gstate( enp_swell , root , An , Bn , Cn , Dn )
+ call  wf_t0( enp_swell , root , An , Bn , Cn , Dn )
 
 end subroutine Coeficientes
 !
 !
 !
-!=========================================================
- subroutine wf_gstate( enp_swell , root , A , B , C , D )
-!=========================================================
+!====================================================
+ subroutine wf_t0( enp_swell , root , A , B , C , D )
+!====================================================
 real*8  , intent(in) :: A , B , C , D
 real*8  , intent(in) :: enp_swell(:)
 integer , intent(in) :: root
@@ -107,8 +135,8 @@ if( verbose ) then
 
 13  format(7e15.4)
 
-end subroutine wf_gstate
+end subroutine wf_t0
 !
 !
 !
-end module g_state
+end module estado_inicial

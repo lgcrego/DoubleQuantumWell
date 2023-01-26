@@ -33,11 +33,12 @@ SOURCE = constants.o \
 	     grade.o \
          IO_stuff.o \
          roots.o \
-         ground_state.o \
+         initial_state.o \
          wf.o \
 	     wfcont.o \
          ensemble.o \
-	     orthogonalbasis.o \
+	     time_propagator.o \
+         QW_dynamics.o \
 	     width.o \
 	     main.o \
 

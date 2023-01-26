@@ -11,13 +11,13 @@ public :: ensemble
 
 contains
 
-!=================================================================================
- Subroutine ensemble( mat_rho , tempo , energy , step , coefi_phi_t , sinal , level)
-!=================================================================================
+!============================================================================
+ Subroutine ensemble( mat_rho , tempo , energy , step , coefi_phi_t , sinal )
+!============================================================================
 real*8     , intent(in) :: mat_rho(:)
 real*8     , intent(in) :: tempo , sinal
 real*8     , intent(in) :: energy(:)
-integer    , intent(in) :: step , level
+integer    , intent(in) :: step 
 complex*16 , intent(in) :: coefi_phi_t(:,:)
 
 !local variables
@@ -25,7 +25,6 @@ real*8  ,allocatable  :: entropy(:) , trace(:) , dentropy(:) , soma(:)!, trabalh
 real*8  :: e_package , calor , trabalho , force
 integer :: n , m
 
-if(.not. allocated(ptaumn) )       allocate( ptaumn( 4,4 ) )
 if(.not. allocated(entropy) )      allocate( entropy( 10 ) )
 if(.not. allocated(dentropy) )     allocate( dentropy( 10 ) )
 if(.not. allocated(trace) )        allocate( trace( n_all_roots ) )
@@ -134,32 +133,6 @@ if( step > 1 ) then
         write( 83 , 13 ) tempo , e_package
     close( 83 ) 
     
-    forall( n = 1 : 4 ) ptaumn(level,n) = mat_rho(n) 
-    
-    !==========================================================
-    !       Jarzynski Equality
-    !==========================================================
-    if(step == n_dt ) then
-    open( 120 , file='diagram.dat', position='append'  )
-        write(120,13) energy(1) - energy(4) , ptaumn(1,4)*rho_inic(4)
-        write(120,13) energy(2) - energy(4) , ptaumn(2,4)*rho_inic(4)
-        write(120,13) energy(3) - energy(4) , ptaumn(3,4)*rho_inic(4)
-    
-        write(120,13) energy(4) - energy(3) , ptaumn(4,3)*rho_inic(3)
-        write(120,13) energy(2) - energy(3) , ptaumn(2,3)*rho_inic(3)
-        write(120,13) energy(1) - energy(3) , ptaumn(1,3)*rho_inic(3)
-    
-        write(120,13) energy(4) - energy(2) , ptaumn(4,2)*rho_inic(2)
-        write(120,13) energy(3) - energy(2) , ptaumn(3,2)*rho_inic(2)
-        write(120,13) energy(1) - energy(2) , ptaumn(1,2)*rho_inic(2)
-    
-        write(120,13) energy(4) - energy(1) , ptaumn(4,1)*rho_inic(1)
-        write(120,13) energy(3) - energy(1) , ptaumn(3,1)*rho_inic(1)
-        write(120,13) energy(2) - energy(1) , ptaumn(2,1)*rho_inic(1)
-        write(120,13) 0.d0 , rho_inic(1)*ptaumn(1,1) + rho_inic(2)*ptaumn(2,2)+rho_inic(3)*ptaumn(3,3)+ rho_inic(4)*ptaumn(4,4)
-    close( 120 )
-    end if
-    
     !==========================================================
     !       DIAGONALIZA RHO PARA OBTER OS AUTO ESTADOS
     !==========================================================
@@ -191,7 +164,7 @@ if( step > 1 ) then
     close( 91 )
     
     open( 92 , file='allenerg.dat' , position='append' )
-        write( 92 , 13 ) tempo , calortotal + trabalhototal + energy_zero_package - rymev*sum( energy( : )*mat_rho( : ) )
+        write( 92 , 13 ) tempo , calortotal + trabalhototal + energy_t0 - rymev*sum( energy( : )*mat_rho( : ) )
     close( 92 )
 
 endif
