@@ -161,14 +161,10 @@ implicit none
 real*8  , intent(in) :: tempo , energy_wf  , energy_t0
 
 open( 327 , file='energy_wf.dat' , position='append' )
-    write(327 , 13 ) tempo , energy_wf
+    write(327 , 13 ) tempo , energy_wf , (energy_wf - energy_t0)
 close( 327 )
 
-open( 325 , file='denergy.dat' , position='append' )
-    write(325 , 13 ) tempo , (energy_wf - energy_t0)
-close( 325 )
-
-13 format(7d15.4)
+13 format(3d15.4)
 
 end subroutine write_energies
 !
@@ -199,23 +195,23 @@ character(len=*) , intent(in) :: instance
 integer       :: date_time(8)
 character(2)  :: day, hour, minute
 character(4)  :: year 
-character(17) :: nome 
+character(17) , save :: nome 
 
 ! local parameters ...
 character(len=3) :: month(12)=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
  
-call date_and_time(values=date_time) 
-
-write(day, '(i2)') date_time(3)
-write(year,'(i4)') date_time(1)
-write(hour,'(i2)') date_time(5)
-write(minute,'(i2)') date_time(6)
-
-nome = day//'-'//month(date_time(2))//'-'//year//'-'//hour//':'//minute
-
 select case (instance)
 
    case('make') 
+         call date_and_time(values=date_time) 
+         
+         write(day, '(i2)') date_time(3)
+         write(year,'(i4)') date_time(1)
+         write(hour,'(i2)') date_time(5)
+         write(minute,'(i2)') date_time(6)
+         
+         nome = trim(day//'-'//month(date_time(2))//'-'//year//'-'//hour//':'//minute)
+
          call system('mkdir ' //  nome )
 
    case('move')

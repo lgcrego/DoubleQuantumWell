@@ -51,7 +51,7 @@ energias( N_of_roots+1 : N_all_roots ) = energias_cont(:)  !<== all (bound+conti
 deallocate( energias_cont )
 
 !====================================
-!       Cálculo da Dinâmica
+!   Cálculo da Dinâmica Quantica
 !====================================
 call quantum_propagation( energias , step , tempo , sinal )
 

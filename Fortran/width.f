@@ -24,14 +24,14 @@ Bc = (l22_maximo-l22_minimo) / two
 tempo = 0.d0
 step = 0
 ti    = 0.d0
-n_dt  = ciclo*( nint(200.d0/dl) + 1 )
+n_dt  = ciclo*( nint(200.0/dl) + 1 )
 
 do m = 1 , ciclo
 
    !=================================
    !       Expandindo o poço
    !=================================
-   do i = 0 , nint( 100.d0 / dl )
+   do i = 0 , nint( 100.0 / dl )
 
         step = step + 1
         tf  = acos(one - dl*float(i)/50.d0) / freq 
@@ -52,7 +52,7 @@ do m = 1 , ciclo
    !==========================
    !   Comprimindo o Poço
    !==========================
-   do i = nint( 100.d0 / dl )  , nint( 200.d0 / dl ) 
+   do i = nint( 100.0 / dl ) + 1  , nint( 200.0 / dl ) 
 
         step = step + 1
    
@@ -64,7 +64,7 @@ do m = 1 , ciclo
         sinal = -1.d0
         tempo = tempo + dt*freq
         
-        print*,  "width of second well is " , l22 , "tempo is ", tempo
+        print*,  "width of second well is " , l22 , "time is ", tempo
 
         call QW_dynamics( step , tempo , sinal ) 
 

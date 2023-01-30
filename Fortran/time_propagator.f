@@ -66,6 +66,8 @@ if( step == 1 .or. step == n_dt+1 ) then
         
         coefi_phi_t(:,2) = coefi_phi_t(:,1)
         
+        call write_pop(tempo , aux)
+        
         do n = 1 , N_all_Roots
            mat_rho(n) = coefi_phi_t(n,1)*conjg(coefi_phi_t(n,1))  ! <== trace = 1
         enddo
@@ -74,8 +76,6 @@ if( step == 1 .or. step == n_dt+1 ) then
         
         if( diagram ) call diagram_p_x( psi_t )
 
-        if( verbose ) call write_pop(tempo , aux)
-        
         !===========================
         ! Mudança de Base.  phi -> x
         !===========================
@@ -131,7 +131,7 @@ if( step > 1 ) then
         !======================
         aux(:) = psi_t(:)*conjg(psi_t(:))
 
-        if( verbose ) call write_pop(tempo , aux)
+        call write_pop(tempo , aux)
 
         !==========================
         ! Mudança de Base  phi -> x
