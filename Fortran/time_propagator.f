@@ -8,7 +8,7 @@ use RootFinding    , only : Roots
 use griding        , only : grade , sumtrap
 use wfunction      , only : wavefunc , coefic
 use wfunction_cont , only : wavefunc_cont , coefic_cont
-use IO_routines    , only : GenerateGnuPlotScript , diagram_p_x , write_pop , write_energies
+use IO_routines    , only : write_pop , write_energies
 use Joule          , only : ensemble
 
 implicit none
@@ -25,9 +25,9 @@ real*8     , allocatable :: aux(:) , mat_rho(:)
 contains
 
 !============================================================
- Subroutine quantum_propagation( enp , step , tempo , sinal )
+ Subroutine quantum_propagation( e_n , step , tempo , sinal )
 !============================================================
-real*8  , intent(in)  :: enp(:)
+real*8  , intent(in)  :: e_n(:)
 real*8  , intent(in)  :: tempo , sinal
 integer , intent(in)  :: step 
 
@@ -47,7 +47,7 @@ if( step == 1 .or. step == n_dt+1 ) then
            coefi_phi_t(n,1) = sumtrap( 1 , grid_size , x(:,1) , aux )  ! <== C_n(t0)
         enddo
         
-        energy_t0 = rymev*sum( enp(:)*coefi_phi_t(:,1)*conjg(coefi_phi_t(:,1)))
+        energy_t0 = rymev*sum( e_n(:)*coefi_phi_t(:,1)*conjg(coefi_phi_t(:,1)))
         
         !================================
         ! Funcao na base phi (adiabatica)
@@ -72,10 +72,8 @@ if( step == 1 .or. step == n_dt+1 ) then
            mat_rho(n) = coefi_phi_t(n,1)*conjg(coefi_phi_t(n,1))  ! <== trace = 1
         enddo
 
-        if( MecStat ) call ensemble( mat_rho , tempo , enp , step , coefi_phi_t ,sinal )
+        if( MecStat ) call ensemble( mat_rho , tempo , e_n , step , coefi_phi_t ,sinal )
         
-        if( diagram ) call diagram_p_x( psi_t )
-
         !===========================
         ! Mudança de Base.  phi -> x
         !===========================
@@ -99,7 +97,7 @@ if( step > 1 ) then
         ! Evolução temporal (adiabatic part)
         !===================================
         do n = 1 , N_all_roots
-           temporal_operator(n) = exp(-zi*enp(n)*dt)
+           temporal_operator(n) = exp(-zi*e_n(n)*dt)
            coefi_phi_t(n,2)     = temporal_operator(n)*coefi_phi_t(n,2)
         enddo
 
@@ -122,7 +120,7 @@ if( step > 1 ) then
            mat_rho(n) = coefi_phi_t(n,2)*conjg(coefi_phi_t(n,2))
         enddo
 
-        if( MecStat ) call ensemble( mat_rho , tempo , enp , step , coefi_phi_t , sinal )
+        if( MecStat ) call ensemble( mat_rho , tempo , e_n , step , coefi_phi_t , sinal )
 
         deallocate( mat_rho )
 
@@ -138,25 +136,14 @@ if( step > 1 ) then
         !==========================
         forall(i=1:grid_size)  coefi_x_t(i,2) = sum(coefi_phi_t(:,2)*phi_adiabatic(i,:))
     
-        !if( sinal == -1.d0 .and. l2 == 150.d0/aba ) then
-        !        coefi_x_t(:,1)          = coefi_x_t(:,2)
-        !print*, "deu certo?"
-        !        coefi_phi_t(:,1)        = conjg(coefi_phi_t(:,2))
-        !else
-        coefi_x_t(:,1)   = coefi_x_t(:,2)
+        coefi_x_t  (:,1) = coefi_x_t  (:,2)
         coefi_phi_t(:,1) = coefi_phi_t(:,2)
-        !end if
-
-        if( diagram ) call diagram_p_x( psi_t )
 
 end if
 
-energy_wf = rymev*sum( enp(:)*coefi_phi_t(:,1)*conjg(coefi_phi_t(:,1)))
+energy_wf = rymev*sum( e_n(:)*coefi_phi_t(:,1)*conjg(coefi_phi_t(:,1)))
 
 call write_energies( tempo, energy_wf  , energy_t0 )
-
-! mencoder mf://*.png -mf w=1000:h=600:fps=20:type=png -ovc copy -oac copy -o din_wave.avi
-if( video ) call GenerateGnuPlotScript( psi_t , energy_wf ) 
 
 end subroutine
 !

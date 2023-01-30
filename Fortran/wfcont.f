@@ -11,9 +11,9 @@ public :: wavefunc_cont , coefic_cont
     contains
 
 !==========================================================
- subroutine COEFIC_cont( enp_cont_dwell , Nroots_cont )
+ subroutine COEFIC_cont( e_n_cont_dwell , Nroots_cont )
 !==========================================================
-real*8  , intent(in) :: enp_cont_dwell(:)
+real*8  , intent(in) :: e_n_cont_dwell(:)
 integer , intent(in) :: Nroots_cont 
 
 !   variaveis locais
@@ -25,8 +25,8 @@ real*8                :: A , B, C, D, E, F, G, H, I, J, An, Bn, Cn, Dn, En, Fn, 
 real*8 , allocatable  :: psic_2(:)
 
 do root = 1 , Nroots_cont
-      k1 = sqrt( enp_cont_dwell(root) - v0)
-      k2 = sqrt( enp_cont_dwell(root) )
+      k1 = sqrt( e_n_cont_dwell(root) - v0)
+      k2 = sqrt( e_n_cont_dwell(root) )
   
       m = l1 + l0
       n = l1 + l0 + l2
@@ -100,15 +100,15 @@ do root = 1 , Nroots_cont
 
      ! Norma
 
-     call  wavefunc_cont(enp_cont_dwell , root,An,Bn,Cn,Dn,En,Fn,Gn,Hn,Ino, Jn)
+     call  wavefunc_cont(e_n_cont_dwell , root,An,Bn,Cn,Dn,En,Fn,Gn,Hn,Ino, Jn)
 enddo
     
 end subroutine COEFIC_cont
 
 !===================================================================
- subroutine wavefunc_cont(enp_cont_dwell , root,A,B,C,D,E,F,G,H,I,J)
+ subroutine wavefunc_cont(e_n_cont_dwell , root,A,B,C,D,E,F,G,H,I,J)
 !===================================================================
-real*8      , intent(in)  :: enp_cont_dwell(:)
+real*8      , intent(in)  :: e_n_cont_dwell(:)
 integer     , intent(in)  :: root
 real*8      , intent(in)  :: A , B, C, D, E, F, G, H, I, J
 
@@ -120,8 +120,8 @@ real*8  , allocatable :: phi_2_cont(:) , phi_cont(:,:)
 if( .not. allocated(Phi_cont))    allocate( Phi_cont( size(x(:,1)) , N_of_roots_cont ) , source = 0.d0)
 if( .not. allocated(phi_2_cont) ) allocate( phi_2_cont(grid_size) )
 
-rk1 = sqrt( enp_cont_dwell(root) - v0)
-rk2 = sqrt( enp_cont_dwell(root) )
+rk1 = sqrt( e_n_cont_dwell(root) - v0)
+rk2 = sqrt( e_n_cont_dwell(root) )
 
 where( x(:,2) == 1 ) phi_cont(: , root) = A*cos( rk1*x(:,1) ) + B*sin( rk1*x(:,1) )
 where( x(:,2) == 2 ) phi_cont(: , root) = C*cos( rk2*x(:,1) ) + D*sin( rk2*x(:,1) )

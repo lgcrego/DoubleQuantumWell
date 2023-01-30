@@ -11,9 +11,9 @@ public :: wavefunc , coefic
     contains
 
 !===========================================
- subroutine COEFIC( enp_dwell , Nroots ) 
+ subroutine COEFIC( e_n_dwell , Nroots ) 
 !===========================================
-real*8  , intent(in)    :: enp_dwell(:)
+real*8  , intent(in)    :: e_n_dwell(:)
 integer , intent(in)    :: Nroots
 
 !   variaveis locais
@@ -26,9 +26,9 @@ real*8 , allocatable  :: psi_2(:)
 
 
 do root = 1 , Nroots
-    k1 = sqrt( v0 - enp_dwell(root))
-    k2 = sqrt( enp_dwell(root) )
-    k3 = sqrt( v1 - enp_dwell(root))
+    k1 = sqrt( v0 - e_n_dwell(root))
+    k2 = sqrt( e_n_dwell(root) )
+    k3 = sqrt( v1 - e_n_dwell(root))
 
     m  = l1 + l0
     n  = l1 + l0 + l2
@@ -102,16 +102,16 @@ do root = 1 , Nroots
     Am(root) = An
 
  ! Norma
- call  wavefunc(enp_dwell,root,An,Bn,Cn,Dn,En,Fn,Gn,Hn)
+ call  wavefunc(e_n_dwell,root,An,Bn,Cn,Dn,En,Fn,Gn,Hn)
 
 enddo
 
 end subroutine COEFIC
 
 !=====================================================================
- subroutine wavefunc(enp_dwell , root,A,B,C,D,E,F,G,H )
+ subroutine wavefunc(e_n_dwell , root,A,B,C,D,E,F,G,H )
 !=====================================================================
-real*8  , intent(in) :: enp_dwell(:)
+real*8  , intent(in) :: e_n_dwell(:)
 integer , intent(in) :: root 
 real*8  , intent(in) :: A , B , C , D , E , F , G , H
 
@@ -125,9 +125,9 @@ if( .NOT. allocated(Phi))    allocate( Phi( size(x(:,1)) , N_of_roots ) , source
 if( .NOT. allocated(Psi))    allocate( Psi( size(x(:,1)) , N_of_roots ) , source = 0.d0 )
 if( .NOT. allocated(phi_2) ) allocate( phi_2(grid_size) )
 
-rk1 = sqrt( v0 - enp_dwell(root))
-rk2 = sqrt( enp_dwell(root) )
-rk3 = sqrt( v1 - enp_dwell(root))
+rk1 = sqrt( v0 - e_n_dwell(root))
+rk2 = sqrt( e_n_dwell(root) )
+rk3 = sqrt( v1 - e_n_dwell(root))
 
 where( x(:,2) == 1 ) phi(: , root) = A*exp( rk1*x(:,1) )
 where( x(:,2) == 2 ) phi(: , root) = B*cos( rk2*x(:,1) ) + C*sin( rk2*x(:,1) )

@@ -41,11 +41,11 @@ end subroutine get_Psi_t0
 !
 !
 !============================================
- subroutine Coeficientes( enp_swell , root ) 
+ subroutine Coeficientes( e_n_swell , root ) 
 ! Estado Inicial localizado no nivel=root 
-! enp_swell(root) = energia do nivel=root 
+! e_n_swell(root) = energia do nivel=root 
 !============================================
-real*8  , intent(in) :: enp_swell(:)
+real*8  , intent(in) :: e_n_swell(:)
 integer , intent(in) :: root
 
 !   variaveis locais
@@ -53,8 +53,8 @@ real*8 :: A,B,C,D,An,Bn,Cn,Dn,psinormalizado,c1,c2
 real*8 :: k2,k1,k2l1,k1l1,Am(500),Bm(500),Cm(500),Dm(500)
 real*8 , allocatable :: psi_2(:) 
 
- k1 = sqrt( v0 - enp_swell(root) )
- k2 = sqrt( enp_swell(root) )
+ k1 = sqrt( v0 - e_n_swell(root) )
+ k2 = sqrt( e_n_swell(root) )
 
  k1l1 = k1*l1
  k2l1 = k2*l1
@@ -90,17 +90,17 @@ real*8 , allocatable :: psi_2(:)
  Am(root) = An
 
 ! wave-function do estado inicial ...
- call  wf_t0( enp_swell , root , An , Bn , Cn , Dn )
+ call  wf_t0( e_n_swell , root , An , Bn , Cn , Dn )
 
 end subroutine Coeficientes
 !
 !
 !
 !====================================================
- subroutine wf_t0( enp_swell , root , A , B , C , D )
+ subroutine wf_t0( e_n_swell , root , A , B , C , D )
 !====================================================
 real*8  , intent(in) :: A , B , C , D
-real*8  , intent(in) :: enp_swell(:)
+real*8  , intent(in) :: e_n_swell(:)
 integer , intent(in) :: root
 
 !   variveis locais
@@ -112,8 +112,8 @@ real*8  , allocatable   :: Psi_2(:)
  if( .not. allocated(Psi) )   allocate( Psi( size(x(:,1)) , N_of_roots ) , source = 0.d0 )
  if( .not. allocated(Psi_2) ) allocate( Psi_2(grid_size) )
 
- rk1 = sqrt( v0 - enp_swell(root) )
- rk2 = sqrt( enp_swell(root) )
+ rk1 = sqrt( v0 - e_n_swell(root) )
+ rk2 = sqrt( e_n_swell(root) )
 
  where( x(:,2) == 1 ) Psi(:,root) = A*exp( rk1*x(:,1) )
  where( x(:,2) == 2 ) Psi(:,root) = B*cos( rk2*x(:,1) ) + C*sin( rk2*x(:,1) )

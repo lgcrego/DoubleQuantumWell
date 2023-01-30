@@ -65,7 +65,7 @@ regime = 1    ! 0 para caso adiabatico
               ! 1 para caso ressonante
               ! 2 para caso nonadiabatico
 
-ciclo       = 1
+ciclo       = 2
 nivel       = 1
 N_all_roots = 40
 
